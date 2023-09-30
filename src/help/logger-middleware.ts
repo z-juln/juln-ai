@@ -7,14 +7,16 @@ const loggerMiddleWare: Application.Middleware = async (ctx, next) => {
 
   const middlewareLogger = KoaLogger((originalLog, [_, method, url]) => {
     log.info(originalLog);
-    if (query) {
-      log.info(`      query: ${JSON.stringify(query, null, 2)}`);
-    }
-    if (rawBody) {
-      log.info(`      rawBody: ${JSON.stringify(rawBody, null, 2)}`);
-    }
-    if (body) {
-      log.info(`      body: ${JSON.stringify(body, null, 2)}`);
+    if (originalLog.trimStart().startsWith('<--')) {
+      if (query) {
+        log.info(`      query: ${JSON.stringify(query, null, 2)}`);
+      }
+      if (rawBody) {
+        log.info(`      rawBody: ${JSON.stringify(rawBody, null, 2)}`);
+      }
+      if (body) {
+        log.info(`      body: ${JSON.stringify(body, null, 2)}`);
+      }
     }
   });
 

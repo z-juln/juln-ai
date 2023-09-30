@@ -53,13 +53,12 @@ router.post("/", async (ctx) => {
   const xmlBody = await getXmlBody() as WechatXML;
   log.info('===xmlBody', xmlBody);
 
-  if (Object.keys(xmlBody).length === 0) {
+  if (!xmlBody || Object.keys(xmlBody).length === 0) {
     ctx.body = '';
     return;
   }
 
-  ctx.response.type = 'application/xml';
-  ctx.body = `
+  const resXmlbody = `
     <xml>
       <ToUserName><![CDATA[${xmlBody.FromUserName}]]></ToUserName>
       <FromUserName><![CDATA[${xmlBody.ToUserName}]]></FromUserName>
@@ -68,6 +67,10 @@ router.post("/", async (ctx) => {
       <Content><![CDATA[${'😂😂😂😂😂: ' + xmlBody.Content}]]></Content>
     </xml>
   `;
+  log.info('===resXmlbody', resXmlbody);
+
+  ctx.response.type = 'application/xml';
+  ctx.body = resXmlbody;
 });
 
 export default router;
