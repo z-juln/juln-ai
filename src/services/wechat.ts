@@ -2,8 +2,10 @@ import Router from "koa-router";
 import { WxCrypto } from 'node-wxcrypto';
 import xml2js from "xml2js";
 import dayjs from "dayjs";
+import axios from "axios";
 import log from "@/log";
 import { wechat as wechatConfig } from "@/config";
+import { AIType, getAIAnswer, gptAI, simpleAI } from "@/applications/ai";
 
 const wx = new WxCrypto(
   wechatConfig.token,
@@ -53,21 +55,47 @@ router.post("/", async (ctx) => {
   };
 
   const xmlBody = await getXmlBody() as WechatXML;
-  log.info('===xmlBody', xmlBody);
+  const { Content: userContent } = xmlBody.xml;
+  log.info('      xmlBody', xmlBody);
 
-  const resXmlbody = `
+  ctx.response.type = 'application/xml';
+
+  const getResXmlbody = (answer: string) => `
     <xml>
       <ToUserName><![CDATA[${xmlBody.xml.FromUserName}]]></ToUserName>
       <FromUserName><![CDATA[${xmlBody.xml.ToUserName}]]></FromUserName>
       <CreateTime>${dayjs().unix()}</CreateTime>
       <MsgType><![CDATA[text]]></MsgType>
-      <Content><![CDATA[${'😂😂😂😂😂: ' + xmlBody.xml.Content}]]></Content>
+      <Content><![CDATA[${answer}]]></Content>
     </xml>
   `;
-  log.info('===resXmlbody', resXmlbody);
 
-  ctx.response.type = 'application/xml';
-  ctx.body = resXmlbody;
+  const getAITypeAndPrompt = (userContent: string): { aiType: AIType | null; userPrompt: string | null; } => {
+    const invalidRes = { aiType: null, userPrompt: null };
+    const matchArgs = userContent.match(/^\[(.*?)\]:(.+)$/)?.[1] ?? null;
+    if (matchArgs) {
+      const [_, aiType, userPrompt] = matchArgs;
+      if (!['simple-ai', 'gpt'].includes(aiType)) return invalidRes;
+      return { aiType: aiType as AIType, userPrompt };
+    }
+    return invalidRes;
+  };
+
+  const { aiType, userPrompt } = getAITypeAndPrompt(userContent);
+
+  if (aiType === null || userPrompt === null) {
+    ctx.body = getResXmlbody(`
+      ai用法指南:
+        - 输入 [simple-ai]: 鲁迅认识周树人吗?
+        - 输入 [gpt]: 鲁迅认识周树人吗?
+    `);
+    return;
+  }
+
+  const aiAnswer = await getAIAnswer({ aiType, prompt: userPrompt });
+  log.info('      aiAnswer', aiAnswer);
+
+  ctx.body = getResXmlbody(aiAnswer ?? `ai暂无响应`);
 });
 
 export default router;

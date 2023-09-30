@@ -3,3 +3,7 @@ export const wechat = {
   token: 'juln123',
   EncodingAESKey: 'CaAZKRMImbKSZS4vUXmhQqkWnc9TcGOI2qwK25yYPSa',
 };
+
+export const gpt3dot5 = {
+  apiKey: 'sk-TG4ZoUUcJYb5RSIWk0xzP66SHdPoJlyAMpmq5pa5o9G0ev4A',
+};

@@ -1,43 +1,29 @@
 import Router from "koa-router";
 import { PassThrough } from 'stream';
-import { ChatCompletionCreateParamsBase } from "openai/resources/chat/completions";
-import openai from "@/openai";
+import { gptAI, gptAIStream } from "@/applications/ai";
 
 const router = new Router();
 
 router.get("/", async (ctx) => {
-  type ApiBody = Pick<ChatCompletionCreateParamsBase, 'temperature'> & { prompt: string; };
+  type ApiQuery = { prompt: string; temperature?: string; };
   const {
-    temperature = 0.7, // 控制生成文本的创造性，值越高则越随机
     prompt,
-  } = ctx.request.query as unknown as ApiBody;
+    temperature = '0.7',
+  } = ctx.request.query as ApiQuery;
 
-  const chatCompletion = await openai.chat.completions.create({
-    model: 'gpt-3.5-turbo',
-    temperature,
-    messages: [{ role: 'user', content: prompt }],
-  }, {
-    timeout: 5 * 1000,
-  });
+  const chatCompletion = await gptAI(prompt, { temperature: +temperature });
 
   ctx.body = chatCompletion.choices[0].message.content;
 });
 
 router.get("/sse", async (ctx) => {
-  type ApiBody = Pick<ChatCompletionCreateParamsBase, 'temperature'> & { prompt: string; };
+  type ApiQuery = { prompt: string; temperature?: string; };
   const {
-    temperature = 0.7, // 控制生成文本的创造性，值越高则越随机
     prompt,
-  } = ctx.request.query as unknown as ApiBody;
+    temperature = '0.7',
+  } = ctx.request.query as ApiQuery;
 
-  const chatStream = await openai.chat.completions.create({
-    model: 'gpt-3.5-turbo',
-    temperature,
-    messages: [{ role: 'user', content: prompt }],
-    stream: true,
-  }, {
-    timeout: 5 * 1000,
-  });
+  const chatStream = await gptAIStream(prompt, { temperature: +temperature });
 
   ctx.request.socket.setTimeout(0);
   ctx.req.socket.setNoDelay(true);
