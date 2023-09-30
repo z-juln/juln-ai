@@ -5,11 +5,12 @@ import Router from 'koa-router';
 import bodyParser from 'koa-bodyparser';
 import { ChatCompletionCreateParamsBase } from 'openai/resources/chat/completions';
 import { PassThrough } from 'stream';
+import log from './log';
 
 const app = new Koa();
 const router = new Router();
 app.use(logger((originalLog, [_, method, url]) => {
-  console.log(originalLog.replace(url, decodeURIComponent(url)));
+  log.info(originalLog.replace(url, decodeURIComponent(url)));
 }));
 app.use(bodyParser());
 app.use(router.routes());
@@ -71,5 +72,5 @@ router.get("/gpt/sse", async (ctx) => {
 });
 
 app.listen(80, () =>
-  console.log("Server is running, http://localhost/gpt?prompt=鲁迅认识周树人吗?")
+  log.info("Server is running, http://localhost/gpt?prompt=鲁迅认识周树人吗?")
 );
