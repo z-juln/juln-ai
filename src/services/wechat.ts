@@ -42,29 +42,26 @@ router.post("/", async (ctx) => {
   });
 
   type WechatXML = {
-    ToUserName: string;
-    FromUserName: string;
-    CreateTime: string;
-    MsgType: string;
-    Content: string;
-    MsgId: string;
+    xml: {
+      ToUserName: string;
+      FromUserName: string;
+      CreateTime: string;
+      MsgType: string;
+      Content: string;
+      MsgId: string;
+    };
   };
 
   const xmlBody = await getXmlBody() as WechatXML;
   log.info('===xmlBody', xmlBody);
 
-  if (!xmlBody || Object.keys(xmlBody).length === 0) {
-    ctx.body = '';
-    return;
-  }
-
   const resXmlbody = `
     <xml>
-      <ToUserName><![CDATA[${xmlBody.FromUserName}]]></ToUserName>
-      <FromUserName><![CDATA[${xmlBody.ToUserName}]]></FromUserName>
+      <ToUserName><![CDATA[${xmlBody.xml.FromUserName}]]></ToUserName>
+      <FromUserName><![CDATA[${xmlBody.xml.ToUserName}]]></FromUserName>
       <CreateTime>${dayjs().unix()}</CreateTime>
       <MsgType><![CDATA[text]]></MsgType>
-      <Content><![CDATA[${'😂😂😂😂😂: ' + xmlBody.Content}]]></Content>
+      <Content><![CDATA[${'😂😂😂😂😂: ' + xmlBody.xml.Content}]]></Content>
     </xml>
   `;
   log.info('===resXmlbody', resXmlbody);
