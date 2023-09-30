@@ -36,3 +36,7 @@ interface Params {
 
 interface Response = string;
 ```
+
+3. /wechat 微信公众号服务
+
+略
