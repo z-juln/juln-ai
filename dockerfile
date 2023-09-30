@@ -5,4 +5,4 @@ WORKDIR /app
 EXPOSE 3000
 CMD pwd && \
     yarn install && \
-    yarn start
+    yarn server
