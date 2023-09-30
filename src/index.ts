@@ -16,7 +16,6 @@ declare module "koa" {
 
 const app = new Koa();
 app.use(xmlBody({
-  limit: 128,
   encoding: 'utf8',
   xmlOptions: {
     explicitArray: false,
