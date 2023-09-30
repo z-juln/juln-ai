@@ -1,9 +1,11 @@
-import Application from "koa";
+import Router from "koa-router";
 import { PassThrough } from 'stream';
 import { ChatCompletionCreateParamsBase } from "openai/resources/chat/completions";
 import openai from "@/openai";
 
-export const gpt: Application.Middleware = async (ctx) => {
+const router = new Router();
+
+router.get("/", async (ctx) => {
   type ApiBody = Pick<ChatCompletionCreateParamsBase, 'temperature'> & { prompt: string; };
   const {
     temperature = 0.7, // 控制生成文本的创造性，值越高则越随机
@@ -19,9 +21,9 @@ export const gpt: Application.Middleware = async (ctx) => {
   });
 
   ctx.body = chatCompletion.choices[0].message.content;
-};
+});
 
-export const gptSSE: Application.Middleware = async (ctx) => {
+router.get("/sse", async (ctx) => {
   type ApiBody = Pick<ChatCompletionCreateParamsBase, 'temperature'> & { prompt: string; };
   const {
     temperature = 0.7, // 控制生成文本的创造性，值越高则越随机
@@ -52,4 +54,6 @@ export const gptSSE: Application.Middleware = async (ctx) => {
   for await (const part of chatStream) {
     stream.write(part.choices[0]?.delta?.content || '');
   }
-};
+});
+
+export default router;
