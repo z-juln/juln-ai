@@ -23,10 +23,11 @@ router.get("/", (ctx) => {
 // https://juejin.cn/post/7223688436430569509
 // https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Passive_user_reply_message.html
 router.post("/", async (ctx) => {
-  const { timestamp, nonce, openid } = ctx.request.query as { timestamp: string; nonce: string; openid: string; };
-  const data = ctx.request.body as xml2js.convertableToString;
+  type ApiQuery = { timestamp: string; nonce: string; openid: string; };
+  const { timestamp, nonce, openid } = ctx.request.query as ApiQuery;
+  const { xmlBody } = ctx.request;
   const xmlParser = new xml2js.Parser({ explicitArray: false, ignoreAttrs: true });
-  const jsonData = await xmlParser.parseStringPromise(data);
+  const jsonData = await xmlParser.parseStringPromise(xmlBody);
   const xml = await wx.decrypt(jsonData.xml.Encrypt, timestamp, nonce);
   const msg = await xmlParser.parseStringPromise(xml.message);
   const userContent = msg.xml.content;

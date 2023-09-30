@@ -8,8 +8,25 @@ import gptRouter from '@/services/gpt';
 import wechatRouter from '@/services/wechat';
 import loggerMiddleWare from '@/help/logger-middleware';
 
+declare module "koa" {
+  interface Request {
+    xmlBody: any;
+  }
+}
+
 const app = new Koa();
-app.use(xmlBody());
+app.use(xmlBody({
+  limit: 128,
+  encoding: 'utf8',
+  xmlOptions: {
+    explicitArray: false,
+  },
+  key: 'xmlBody',
+  onerror: (err, ctx) => {
+    log.error(err);
+    ctx.throw(err.message);
+  },
+}));
 app.use(bodyParser());
 app.use(loggerMiddleWare);
 const router = new Router();
