@@ -53,6 +53,7 @@ router.post("/", async (ctx) => {
   const xmlBody = await getXmlBody() as WechatXML;
   log.info('===xmlBody', xmlBody);
 
+  ctx.response.type = 'application/xml';
   ctx.body = `
     <xml>
       <ToUserName><![CDATA[${xmlBody.FromUserName}]]></ToUserName>
