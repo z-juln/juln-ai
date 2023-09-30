@@ -7,12 +7,6 @@ import gptRouter from '@/services/gpt';
 import wechatRouter from '@/services/wechat';
 import loggerMiddleWare from '@/help/logger-middleware';
 
-declare module "koa" {
-  interface Request {
-    xmlBody: any;
-  }
-}
-
 const app = new Koa();
 app.use(bodyParser());
 app.use(loggerMiddleWare);

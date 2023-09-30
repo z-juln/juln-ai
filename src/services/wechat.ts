@@ -1,3 +1,4 @@
+import { Context } from "koa";
 import Router from "koa-router";
 import { WxCrypto } from 'node-wxcrypto';
 import xml2js from "xml2js";
@@ -41,7 +42,7 @@ const xmlParser = new xml2js.Parser({ explicitArray: false, ignoreAttrs: true })
 router.post("/", xmlParseMiddleware, async (ctx) => {
   type ApiQuery = { timestamp: string; nonce: string; openid: string; };
   const { timestamp, nonce, openid } = ctx.request.query as ApiQuery;
-  const { xmlBody } = ctx.request;
+  const { xmlBody } = ctx.request as (Context['request'] & { xmlBody: any; });
   const xml = await wx.decrypt(xmlBody.xml.Encrypt, timestamp, nonce);
   const msg = await xmlParser.parseStringPromise(xml.message);
   const userContent = msg.xml.content;
