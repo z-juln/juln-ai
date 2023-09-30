@@ -24,18 +24,18 @@ router.get("/", (ctx) => {
 // https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Passive_user_reply_message.html
 router.post("/", async (ctx) => {
   log.info('===wechat', ctx.request.query, ctx.request.body);
-  const { nonce } = ctx.request.query as { nonce: string; };
+  const { timestamp, nonce, openid } = ctx.request.query as { timestamp: string; nonce: string; openid: string; };
   const data = ctx.request.body as xml2js.convertableToString;
   const xmlParser = new xml2js.Parser({ explicitArray: false, ignoreAttrs: true });
   const jsonData = await xmlParser.parseStringPromise(data);
-  const xml = await wx.decrypt(jsonData.xml.Encrypt, '', nonce);
+  const xml = await wx.decrypt(jsonData.xml.Encrypt, timestamp, nonce);
   const msg = await xmlParser.parseStringPromise(xml.message);
   const userContent = msg.xml.content;
   log.info("-----userContent", userContent);
 
   ctx.body = `
     <xml>
-      <ToUserName><![CDATA[oO-x10Xky1zv7bJeqLAN2OeawgqA]]></ToUserName>
+      <ToUserName><![CDATA[${openid}]]></ToUserName>
       <FromUserName><![CDATA[A1850021148]]></FromUserName>
       <CreateTime>${dayjs().unix()}</CreateTime>
       <MsgType><![CDATA[text]]></MsgType>
