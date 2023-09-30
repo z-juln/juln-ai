@@ -5,6 +5,7 @@ import Router from 'koa-router';
 import bodyParser from 'koa-bodyparser';
 import { ChatCompletionCreateParamsBase } from 'openai/resources/chat/completions';
 import { PassThrough } from 'stream';
+import axios from 'axios';
 import log from './log';
 
 const app = new Koa();
@@ -18,6 +19,11 @@ app.use(router.routes());
 const openai = new OpenAI({
   apiKey: "sk-TG4ZoUUcJYb5RSIWk0xzP66SHdPoJlyAMpmq5pa5o9G0ev4A",
   baseURL: 'https://api.chatanywhere.com.cn/v1',
+});
+
+router.get('/simple-ai', async (ctx) => {
+  const { prompt } = ctx.request.query;
+  ctx.redirect(`http://api.qingyunke.com/api.php?key=free&appid=0&msg=${prompt}`);
 });
 
 router.get("/gpt", async (ctx) => {
