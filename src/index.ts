@@ -1,5 +1,6 @@
 import Koa from 'koa';
 import Router from 'koa-router';
+import xmlBody from 'koa-xml-body';
 import bodyParser from 'koa-bodyparser';
 import log from '@/log';
 import simpleAiRouter from '@/services/simple-ai';
@@ -8,6 +9,7 @@ import wechatRouter from '@/services/wechat';
 import loggerMiddleWare from '@/help/logger-middleware';
 
 const app = new Koa();
+app.use(xmlBody());
 app.use(bodyParser());
 app.use(loggerMiddleWare);
 const router = new Router();

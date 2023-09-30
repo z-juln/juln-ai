@@ -23,7 +23,6 @@ router.get("/", (ctx) => {
 // https://juejin.cn/post/7223688436430569509
 // https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Passive_user_reply_message.html
 router.post("/", async (ctx) => {
-  log.info('===wechat', ctx.request.query, ctx.request.body);
   const { timestamp, nonce, openid } = ctx.request.query as { timestamp: string; nonce: string; openid: string; };
   const data = ctx.request.body as xml2js.convertableToString;
   const xmlParser = new xml2js.Parser({ explicitArray: false, ignoreAttrs: true });
