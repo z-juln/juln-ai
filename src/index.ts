@@ -17,9 +17,6 @@ declare module "koa" {
 const app = new Koa();
 app.use(xmlBody({
   encoding: 'utf8',
-  xmlOptions: {
-    explicitArray: false,
-  },
   key: 'xmlBody',
   onerror: (err, ctx) => {
     log.error(err);

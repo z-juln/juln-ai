@@ -3,15 +3,18 @@ import KoaLogger from "koa-logger";
 import log from "@/log";
 
 const loggerMiddleWare: Application.Middleware = async (ctx, next) => {
-  const { rawBody, query, xmlBody } = ctx.request;
+  const { query, rawBody, body, xmlBody } = ctx.request;
 
   const middlewareLogger = KoaLogger((originalLog, [_, method, url]) => {
-    log.info(url);
+    log.info(originalLog);
     if (query) {
       log.info(`      query: ${query}`);
     }
     if (rawBody) {
-      log.info(`      body: ${rawBody}`);
+      log.info(`      rawBody: ${rawBody}`);
+    }
+    if (body) {
+      log.info(`      body: ${body}`);
     }
     if (xmlBody) {
       log.info(`      xmlBody: ${xmlBody}`);
