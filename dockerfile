@@ -1,4 +1,4 @@
-FROM swr.cn-north-4.myhuaweicloud.com/opsci/node:v16.19.0-1
+FROM node:18
 ADD . /app
 VOLUME ["/app/logs", "/logs"]
 WORKDIR /app
