@@ -1,6 +1,5 @@
 import Koa from 'koa';
 import Router from 'koa-router';
-import xmlBody from 'koa-xml-body';
 import bodyParser from 'koa-bodyparser';
 import log from '@/log';
 import simpleAiRouter from '@/services/simple-ai';
@@ -15,14 +14,6 @@ declare module "koa" {
 }
 
 const app = new Koa();
-app.use(xmlBody({
-  encoding: 'utf8',
-  key: 'xmlBody',
-  onerror: (err, ctx) => {
-    log.error(err);
-    ctx.throw(err.message);
-  },
-}));
 app.use(bodyParser());
 app.use(loggerMiddleWare);
 const router = new Router();
