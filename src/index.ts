@@ -8,15 +8,16 @@ import wechatRouter from '@/services/wechat';
 import loggerMiddleWare from '@/help/logger-middleware';
 
 const app = new Koa();
-const router = new Router();
 app.use(bodyParser());
 app.use(loggerMiddleWare);
+const router = new Router();
 app.use(router.routes());
 
-router.use('simple-ai', simpleAiRouter.routes());
-router.get("/gpt", gptRouter.routes());
-router.get("/wechat", wechatRouter.routes());
+router.get('/healthy', (ctx) => ctx.body = 'healthy');
+router.use('/simple-ai', simpleAiRouter.routes());
+router.use('/gpt', gptRouter.routes());
+router.use('/wechat', wechatRouter.routes());
 
 app.listen(80, () => {
-  log.info("Server is running, http://localhost/gpt?prompt=鲁迅认识周树人吗?");
+  log.info('Server is running, http://localhost/gpt?prompt=鲁迅认识周树人吗?');
 });

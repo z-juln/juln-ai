@@ -3,18 +3,16 @@ import KoaLogger from "koa-logger";
 import log from "@/log";
 
 const loggerMiddleWare: Application.Middleware = async (ctx, next) => {
+  const { rawBody } = ctx.request;
+
   const middlewareLogger = KoaLogger((originalLog, [_, method, url]) => {
     log.info(originalLog.replace(url, decodeURIComponent(url)));
+    if (method === 'POST') {
+      log.info(`      body: ${rawBody}`);
+    }
   });
 
-  const noopNext = async () => {};
-
-  const { method, rawBody } = ctx.request;
-  if (method === 'POST') {
-    middlewareLogger(ctx, noopNext);
-    log.info(`      body: ${rawBody}`);
-    return await next();
-  }
+  await middlewareLogger(ctx, next);
 };
 
 export default loggerMiddleWare;
