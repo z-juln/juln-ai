@@ -1,16 +1,8 @@
 import Router from "koa-router";
-import { WxCrypto } from 'node-wxcrypto';
 import xml2js from "xml2js";
 import dayjs from "dayjs";
 import log from "@/log";
-import { wechat as wechatConfig } from "@/config";
 import { AIType, getAIAnswer, gptAI, simpleAI } from "@/applications/ai";
-
-const wx = new WxCrypto(
-  wechatConfig.token,
-  wechatConfig.EncodingAESKey,
-  wechatConfig.appid,
-);
 
 const router = new Router();
 
@@ -23,8 +15,6 @@ router.get("/", (ctx) => {
 
 const xmlParser = new xml2js.Parser({ explicitArray: false, ignoreAttrs: true });
 
-// https://juejin.cn/post/7223688436430569509
-// https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Passive_user_reply_message.html
 router.post("/", async (ctx) => {
   type ApiQuery = { timestamp: string; nonce: string; openid: string; };
   const { timestamp, nonce, openid } = ctx.request.query as ApiQuery;
@@ -73,7 +63,7 @@ router.post("/", async (ctx) => {
     const invalidRes = { aiType: null, userPrompt: null };
     const matchArgs = userContent.match(/^\[(.*?)\]:(.+)$/)?.[1] ?? null;
     if (matchArgs) {
-      const [_, aiType, userPrompt] = matchArgs;
+      const [aiType, userPrompt] = [RegExp.$1, RegExp.$2];
       if (!['simple-ai', 'gpt'].includes(aiType)) return invalidRes;
       return { aiType: aiType as AIType, userPrompt };
     }
@@ -82,19 +72,21 @@ router.post("/", async (ctx) => {
 
   const { aiType, userPrompt } = getAITypeAndPrompt(userContent);
 
+  let answer: string;
+
   if (aiType === null || userPrompt === null) {
-    ctx.body = getResXmlbody(`
+    answer = `
       ai用法指南:
         - 输入 [simple-ai]: 鲁迅认识周树人吗?
         - 输入 [gpt]: 鲁迅认识周树人吗?
-    `);
-    return;
+    `;
+  } else {
+    const aiAnswer = await getAIAnswer({ aiType, prompt: userPrompt });
+    answer = aiAnswer ?? `ai暂无响应`;
   }
 
-  const aiAnswer = await getAIAnswer({ aiType, prompt: userPrompt });
-  log.info('      aiAnswer', aiAnswer);
-
-  ctx.body = getResXmlbody(aiAnswer ?? `ai暂无响应`);
+  log.info('      answer', answer);
+  ctx.body = getResXmlbody(answer);
 });
 
 export default router;
