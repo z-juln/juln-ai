@@ -53,6 +53,11 @@ router.post("/", async (ctx) => {
   const xmlBody = await getXmlBody() as WechatXML;
   log.info('===xmlBody', xmlBody);
 
+  if (Object.keys(xmlBody).length === 0) {
+    ctx.body = '';
+    return;
+  }
+
   ctx.response.type = 'application/xml';
   ctx.body = `
     <xml>
