@@ -75,10 +75,13 @@ router.post("/", async (ctx) => {
   let answer: string;
 
   if (aiType === null || userPrompt === null) {
-    answer = `
+    answer = `\
       ai用法指南:
         - 输入 [simple-ai]: 鲁迅认识周树人吗?
         - 输入 [gpt]: 鲁迅认识周树人吗?
+      
+      是: "[simple-ai]: 鲁迅认识周树人吗?"
+      双引号里的字符串都要带上!!!
     `;
   } else {
     const aiAnswer = await getAIAnswer({ aiType, prompt: userPrompt });
