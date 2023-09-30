@@ -1,8 +1,6 @@
-import { Context } from "koa";
 import Router from "koa-router";
 import { WxCrypto } from 'node-wxcrypto';
 import xml2js from "xml2js";
-import xmlBody from 'koa-xml-body';
 import dayjs from "dayjs";
 import log from "@/log";
 import { wechat as wechatConfig } from "@/config";
@@ -22,27 +20,30 @@ router.get("/", (ctx) => {
   }
 });
 
-const xmlParseMiddleware = xmlBody({
-  encoding: 'utf8',
-  key: 'xmlBody',
-  xmlOptions: {
-    explicitArray: false,
-    ignoreAttrs: true,
-  },
-  onerror: (err, ctx) => {
-    log.error(err);
-    ctx.throw(err.message);
-  },
-});
-
 const xmlParser = new xml2js.Parser({ explicitArray: false, ignoreAttrs: true });
 
 // https://juejin.cn/post/7223688436430569509
 // https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Passive_user_reply_message.html
-router.post("/", xmlParseMiddleware, async (ctx) => {
+router.post("/", async (ctx) => {
   type ApiQuery = { timestamp: string; nonce: string; openid: string; };
   const { timestamp, nonce, openid } = ctx.request.query as ApiQuery;
-  const { xmlBody } = ctx.request as (Context['request'] & { xmlBody: any; });
+
+  const getXmlBody = () => new Promise<any>((resolve, reject) => {
+    let buf = '';
+    ctx.req.setEncoding('utf8');
+    ctx.req.on('data', (chunk) => {
+      buf += chunk;
+    });
+    ctx.req.on('end', () => {
+      xmlParser.parseStringPromise(buf)
+        .then(resolve)
+        .catch(reject);
+    });
+  });
+
+  const xmlBody = await getXmlBody();
+  log.info('===xmlBody', xmlBody);
+
   const xml = await wx.decrypt(xmlBody.xml.Encrypt, timestamp, nonce);
   const msg = await xmlParser.parseStringPromise(xml.message);
   const userContent = msg.xml.content;

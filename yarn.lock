@@ -727,14 +727,6 @@ koa-router@^12.0.0:
     methods "^1.1.2"
     path-to-regexp "^6.2.1"
 
-koa-xml-body@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.npmmirror.com/koa-xml-body/-/koa-xml-body-3.0.0.tgz#5290bb54b676f8166691c281a4bd5c8cfd7d6c8d"
-  integrity sha512-yqXj7oSg0v36PWEnMMFQYVo01gIoBAHZjyxtjgQ+zD6Jv/ErRmE4mPjlTKYYT1uqaC/RbfvU6uJhYSxHZELg+A==
-  dependencies:
-    raw-body "^2.5.2"
-    xml2js "^0.6.0"
-
 koa@^2.14.2:
   version "2.14.2"
   resolved "https://registry.npmmirror.com/koa/-/koa-2.14.2.tgz#a57f925c03931c2b4d94b19d2ebf76d3244863fc"
@@ -950,7 +942,7 @@ qs@^6.5.2:
   dependencies:
     side-channel "^1.0.4"
 
-raw-body@^2.3.3, raw-body@^2.5.2:
+raw-body@^2.3.3:
   version "2.5.2"
   resolved "https://registry.npmmirror.com/raw-body/-/raw-body-2.5.2.tgz#99febd83b90e08975087e8f1f9419a149366b68a"
   integrity sha512-8zGqypfENjCIqGhgXToC8aB2r7YrBX+AQAfIPs/Mlk+BtPTztOvTS01NRW/3Eh60J+a48lt8qsCzirQ6loCVfA==
@@ -1129,7 +1121,7 @@ whatwg-url@^5.0.0:
     tr46 "~0.0.3"
     webidl-conversions "^3.0.0"
 
-xml2js@^0.6.0, xml2js@^0.6.2:
+xml2js@^0.6.2:
   version "0.6.2"
   resolved "https://registry.npmmirror.com/xml2js/-/xml2js-0.6.2.tgz#dd0b630083aa09c161e25a4d0901e2b2a929b499"
   integrity sha512-T4rieHaC1EXcES0Kxxj4JWgaUQHDk+qwHcYOCFHfiwKz7tOVPLq7Hjq9dM1WCMhylqMEfP7hMcOIChvotiZegA==
