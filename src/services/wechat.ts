@@ -61,9 +61,9 @@ router.post("/", async (ctx) => {
 
   const getAITypeAndPrompt = (userContent: string): { aiType: AIType | null; userPrompt: string | null; } => {
     const invalidRes = { aiType: null, userPrompt: null };
-    const matchArgs = userContent.match(/^\[(.*?)\]:(.+)$/)?.[1] ?? null;
+    const matchArgs = userContent.trim().match(/^\[(.*?)\]:(.+)$/)?.[1] ?? null;
     if (matchArgs) {
-      const [aiType, userPrompt] = [RegExp.$1, RegExp.$2];
+      const [aiType, userPrompt] = [RegExp.$1.toLocaleLowerCase(), RegExp.$2];
       if (!['simple-ai', 'gpt'].includes(aiType)) return invalidRes;
       return { aiType: aiType as AIType, userPrompt };
     }
