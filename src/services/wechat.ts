@@ -2,7 +2,6 @@ import Router from "koa-router";
 import { WxCrypto } from 'node-wxcrypto';
 import xml2js from "xml2js";
 import dayjs from "dayjs";
-import axios from "axios";
 import log from "@/log";
 import { wechat as wechatConfig } from "@/config";
 import { AIType, getAIAnswer, gptAI, simpleAI } from "@/applications/ai";

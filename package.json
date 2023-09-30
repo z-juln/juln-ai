@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^1.5.1",
     "dayjs": "^1.11.10",
     "koa": "^2.14.2",
     "koa-bodyparser": "^4.4.1",
